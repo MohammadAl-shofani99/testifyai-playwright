@@ -229,7 +229,73 @@ app.post('/execute-test-plan', async (req, res) => {
   
   res.json(results);
 });
+// PDF Generation endpoint
+app.post('/generate-pdf', async (req, res) => {
+  const { html } = req.body;
+  
+  if (!html) {
+    return res.status(400).json({ 
+      error: 'HTML content is required' 
+    });
+  }
 
+  let browser;
+
+  try {
+    console.log('🎨 Generating PDF from HTML...');
+    
+    browser = await chromium.launch({
+      headless: true,
+      args: ['--no-sandbox', '--disable-setuid-sandbox']
+    });
+    
+    const page = await browser.newPage();
+    
+    // Set content
+    await page.setContent(html, {
+      waitUntil: 'networkidle'
+    });
+    
+    // Generate PDF
+    const pdfBuffer = await page.pdf({
+      format: 'A4',
+      printBackground: true,
+      margin: {
+        top: '20px',
+        right: '20px',
+        bottom: '20px',
+        left: '20px'
+      }
+    });
+    
+    await browser.close();
+    
+    // Convert to base64
+    const pdfBase64 = pdfBuffer.toString('base64');
+    
+    console.log('✅ PDF generated successfully');
+    
+    res.json({
+      success: true,
+      pdf: pdfBase64,
+      size: pdfBuffer.length,
+      timestamp: new Date().toISOString()
+    });
+
+  } catch (error) {
+    console.error('❌ PDF generation error:', error);
+    
+    if (browser) {
+      await browser.close();
+    }
+    
+    res.status(500).json({
+      success: false,
+      error: error.message,
+      stack: error.stack
+    });
+  }
+});
 app.listen(PORT, () => {
   console.log(`🚀 TestifyAI Playwright API running on port ${PORT}`);
 });
