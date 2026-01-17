@@ -322,33 +322,16 @@
             loginBtn.textContent = 'Checking...';
             loginAlert.classList.add('hidden');
             
-            try {
-                // إرسال للـ n8n للتحقق
-                const response = await fetch(WEBHOOK_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        action: 'check_subscription',
-                        email: email
-                    })
-                });
-                
-                const data = await response.json();
-                
-                if (data.success && data.subscription) {
-                    // حفظ بيانات المستخدم
-                    currentUser = data.subscription;
-                    localStorage.setItem('testifyai_user', JSON.stringify(currentUser));
-                    
-                    // عرض الـ Dashboard
-                    showDashboard();
-                } else {
-                    loginAlert.textContent = 'No active subscription found. Please subscribe first.';
-                    loginAlert.classList.remove('hidden');
-                }
-            } catch (error) {
-                console.error('Login error:', error);
-                loginAlert.textContent = 'Error connecting. Please try again.';
+            // تحقق بسيط - لو العميل عمل test قبل كدا
+            const savedUser = localStorage.getItem('testifyai_user_' + email);
+            
+            if (savedUser) {
+                // موجود في localStorage
+                currentUser = JSON.parse(savedUser);
+                showDashboard();
+            } else {
+                // مش موجود - يروح يشترك
+                loginAlert.textContent = 'No subscription found. Please subscribe first or complete your first test.';
                 loginAlert.classList.remove('hidden');
             }
             
@@ -437,7 +420,6 @@
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        action: 'start_test',
                         email: currentUser.customer_email,
                         url: websiteUrl,
                         package: currentUser.plan_type
@@ -449,7 +431,7 @@
                 if (data.success) {
                     // تحديث العداد
                     currentUser.tests_used = parseInt(currentUser.tests_used) + 1;
-                    localStorage.setItem('testifyai_user', JSON.stringify(currentUser));
+                    localStorage.setItem('testifyai_user_' + currentUser.customer_email, JSON.stringify(currentUser));
                     updateStats();
                     
                     alert('✅ Test started! You\'ll receive the report via email within 5 minutes.');
@@ -468,7 +450,6 @@
 
         // Logout
         function logout() {
-            localStorage.removeItem('testifyai_user');
             currentUser = null;
             document.getElementById('dashboardSection').style.display = 'none';
             document.getElementById('loginSection').style.display = 'block';
@@ -477,9 +458,12 @@
 
         // تحقق إذا في user محفوظ
         window.addEventListener('load', () => {
-            const savedUser = localStorage.getItem('testifyai_user');
-            if (savedUser) {
-                currentUser = JSON.parse(savedUser);
+            // Check for any saved user
+            const keys = Object.keys(localStorage);
+            const userKey = keys.find(key => key.startsWith('testifyai_user_'));
+            
+            if (userKey) {
+                currentUser = JSON.parse(localStorage.getItem(userKey));
                 showDashboard();
             }
         });
