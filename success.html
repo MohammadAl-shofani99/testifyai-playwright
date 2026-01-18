@@ -171,6 +171,17 @@
             document.getElementById('websiteUrl').textContent = subscriptionData.url;
             document.getElementById('userEmail').textContent = subscriptionData.email;
             
+            // حفظ بيانات للـ Dashboard
+            const dashboardData = {
+                customer_email: subscriptionData.email,
+                plan_type: subscriptionData.package,
+                tests_limit: subscriptionData.price === 49 ? 10 : (subscriptionData.price === 99 ? 25 : (subscriptionData.price === 199 ? 60 : 999)),
+                tests_used: 0,
+                subscription_status: 'active'
+            };
+            
+            localStorage.setItem('testifyai_user_' + subscriptionData.email, JSON.stringify(dashboardData));
+            
             // إرسال للـ n8n webhook
             const webhookUrl = 'https://zoro7979.app.n8n.cloud/webhook-test/978ca1c0-a94a-4598-9a5d-41d65a968b94';
             
@@ -198,7 +209,7 @@
                     document.getElementById('completeView').classList.remove('hidden');
                     document.getElementById('finalEmail').textContent = subscriptionData.email;
                     
-                    // مسح البيانات المحفوظة
+                    // مسح البيانات المؤقتة (نخلي dashboard data)
                     localStorage.removeItem('testifyai_subscription');
                 }, 3000);
             })
@@ -217,7 +228,7 @@
                 <div class="success-icon">⚠️</div>
                 <h1>No Data Found</h1>
                 <p class="message">Please start from the homepage</p>
-                <a href="index-en-simplified.html" class="btn">Go to Homepage</a>
+                <a href="/" class="btn">Go to Homepage</a>
             `;
         }
     </script>
