@@ -303,12 +303,16 @@
             <p style="color: #666;">Loading your dashboard...</p>
         </div>
     </div>
+    
+    <div style="text-align: center; color: white; margin-top: 30px; font-size: 0.9em; opacity: 0.8;">
+        <p>© 2026 Created by Mohammad Omar</p>
+    </div>
 
     <script>
         let currentUser = null;
 
-        // n8n Webhook URL
-       const WEBHOOK_URL = 'https://zoro7979.app.n8n.cloud/webhook-test/6dcb409d-f72f-4e2c-9366-d59e06d6fd64';
+        // n8n Webhook URL - Dashboard specific
+        const WEBHOOK_URL = 'https://zoro7979.app.n8n.cloud/webhook-test/6dcb409d-f72f-4e2c-9366-d59e06d6fd64';
 
         // Login Form
         document.getElementById('loginForm').addEventListener('submit', async (e) => {
@@ -416,7 +420,7 @@
             
             try {
                 // إرسال للـ n8n لبدء الاختبار
-                const response = await fetch(WEBHOOK_URL, {
+                await fetch(WEBHOOK_URL, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
@@ -426,19 +430,14 @@
                     })
                 });
                 
-                const data = await response.json();
+                // تحديث العداد فوراً
+                currentUser.tests_used = parseInt(currentUser.tests_used) + 1;
+                localStorage.setItem('testifyai_user_' + currentUser.customer_email, JSON.stringify(currentUser));
+                updateStats();
                 
-                if (data.success) {
-                    // تحديث العداد
-                    currentUser.tests_used = parseInt(currentUser.tests_used) + 1;
-                    localStorage.setItem('testifyai_user_' + currentUser.customer_email, JSON.stringify(currentUser));
-                    updateStats();
-                    
-                    alert('✅ Test started! You\'ll receive the report via email within 5 minutes.');
-                    document.getElementById('websiteUrl').value = '';
-                } else {
-                    alert('❌ Error starting test. Please try again.');
-                }
+                alert('✅ Test started! You\'ll receive the report via email within 5 minutes.');
+                document.getElementById('websiteUrl').value = '';
+                
             } catch (error) {
                 console.error('Test error:', error);
                 alert('❌ Error starting test. Please try again.');
@@ -468,11 +467,5 @@
             }
         });
     </script>
-    </div>
-    </div>
-    
-    <div style="text-align: center; color: white; margin-top: 30px; font-size: 0.9em; opacity: 0.8;">
-        <p>© 2026 Created by Mohammad Omar</p>
-    </div>
 </body>
 </html>
