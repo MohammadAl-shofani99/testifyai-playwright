@@ -311,8 +311,9 @@
     <script>
         let currentUser = null;
 
-        // n8n Webhook URL - Dashboard specific
+        // n8n Webhook URL - Production
         const WEBHOOK_URL = 'https://zoro7979.app.n8n.cloud/webhook/978ca1c0-a94a-4598-9a5d-41d65a968b94';
+
         // Login Form
         document.getElementById('loginForm').addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -325,15 +326,15 @@
             loginBtn.textContent = 'Checking...';
             loginAlert.classList.add('hidden');
             
-            // تحقق بسيط - لو العميل عمل test قبل كدا
+            // Check localStorage for this specific email
             const savedUser = localStorage.getItem('testifyai_user_' + email);
             
             if (savedUser) {
-                // موجود في localStorage
+                // User found in localStorage
                 currentUser = JSON.parse(savedUser);
                 showDashboard();
             } else {
-                // مش موجود - يروح يشترك
+                // User not found
                 loginAlert.textContent = 'No subscription found. Please subscribe first or complete your first test.';
                 loginAlert.classList.remove('hidden');
             }
@@ -347,7 +348,7 @@
             document.getElementById('loginSection').style.display = 'none';
             document.getElementById('dashboardSection').style.display = 'block';
             
-            // عرض بيانات الباقة
+            // Display plan info
             const planNames = {
                 'starter': 'Starter Plan',
                 'professional': 'Professional Plan',
@@ -365,7 +366,7 @@
             document.getElementById('planName').textContent = planNames[currentUser.plan_type] || 'Unknown Plan';
             document.getElementById('planDetails').textContent = `${planPrices[currentUser.plan_type]}/month • ${currentUser.tests_limit} tests included`;
             
-            // عرض الإحصائيات
+            // Display stats
             updateStats();
         }
 
@@ -384,7 +385,7 @@
             progressBar.style.width = percentage + '%';
             progressBar.textContent = Math.round(percentage) + '%';
             
-            // تحذير إذا قرب من الحد
+            // Warning if close to limit
             const alert = document.getElementById('dashboardAlert');
             if (remaining <= 0) {
                 alert.className = 'alert alert-error';
@@ -407,7 +408,7 @@
             const websiteUrl = document.getElementById('websiteUrl').value;
             const testBtn = document.getElementById('testBtn');
             
-            // تحقق من الحد
+            // Check limit
             const remaining = parseInt(currentUser.tests_limit) - parseInt(currentUser.tests_used);
             if (remaining <= 0) {
                 alert('You\'ve reached your monthly limit!');
@@ -418,7 +419,7 @@
             testBtn.textContent = '⏳ Starting test...';
             
             try {
-                // إرسال للـ n8n لبدء الاختبار
+                // Send to n8n
                 await fetch(WEBHOOK_URL, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -429,7 +430,7 @@
                     })
                 });
                 
-                // تحديث العداد فوراً
+                // Update counter immediately
                 currentUser.tests_used = parseInt(currentUser.tests_used) + 1;
                 localStorage.setItem('testifyai_user_' + currentUser.customer_email, JSON.stringify(currentUser));
                 updateStats();
@@ -453,18 +454,6 @@
             document.getElementById('loginSection').style.display = 'block';
             document.getElementById('loginEmail').value = '';
         }
-
-        // تحقق إذا في user محفوظ
-        window.addEventListener('load', () => {
-            // Check for any saved user
-            const keys = Object.keys(localStorage);
-            const userKey = keys.find(key => key.startsWith('testifyai_user_'));
-            
-            if (userKey) {
-                currentUser = JSON.parse(localStorage.getItem(userKey));
-                showDashboard();
-            }
-        });
     </script>
 </body>
 </html>
