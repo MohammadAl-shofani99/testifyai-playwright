@@ -455,8 +455,7 @@
         }
 
         // Test Form
-        // Test Form
-document.getElementById('testForm').addEventListener('submit', async (e) => {
+            document.getElementById('testForm').addEventListener('submit', async (e) => {
     e.preventDefault();
     
     const websiteUrl = document.getElementById('websiteUrl').value;
@@ -472,47 +471,85 @@ document.getElementById('testForm').addEventListener('submit', async (e) => {
     testBtn.disabled = true;
     testBtn.textContent = '⏳ Starting test...';
     
-    // Step 1: Update localStorage immediately (instant UI!)
-    currentUser.tests_used = (currentUser.tests_used || 0) + 1;
-    localStorage.setItem('eagleeye_user', JSON.stringify(currentUser));
-    updateStats();
-    
-    // Step 2: Update Google Sheet in background (ignore errors!)
-    fetch(AUTH_WEBHOOK_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-            action: 'update_tests',
-            email: currentUser.email
-        })
-    }).catch(() => console.log('Sheet update sent'));
-    
-    // Step 3: Run test (ignore errors!)
-    fetch(TESTING_WEBHOOK_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-            email: currentUser.email,
-            url: websiteUrl,
-            package: currentUser.plan_type || 'free',
-            subscription: false
-        })
-    }).catch(() => console.log('Test sent'));
-    
-    // Show success message ALWAYS
-    alertBox.className = 'alert alert-success';
-    alertBox.textContent = '✅ Test started successfully! You\'ll receive the report via email within 24 hours.';
-    alertBox.classList.remove('hidden');
-    
-    // Clear form
-    document.getElementById('websiteUrl').value = '';
-    
-    // Hide success after 5 seconds
-    setTimeout(() => {
-        if (alertBox.classList.contains('alert-success')) {
-            alertBox.classList.add('hidden');
+    try {
+        // Step 1: Update counter in Google Sheet
+        const updateResponse = await fetch(AUTH_WEBHOOK_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                action: 'update_tests',
+                email: currentUser.email
+            })
+        });
+        
+        const updateData = await updateResponse.json();
+        console.log('Update response:', updateData);
+        
+        // Step 2: Get fresh data from Google Sheet
+        const getUserResponse = await fetch(AUTH_WEBHOOK_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                action: 'get_user_data',
+                email: currentUser.email
+            })
+        });
+        
+        const userData = await getUserResponse.json();
+        console.log('User data:', userData);
+        
+        // Step 3: Update localStorage from Google Sheet
+        if (userData.success) {
+            currentUser.tests_used = parseInt(userData.tests_used) || 0;
+            currentUser.free_tests = parseInt(userData.free_tests) || 3;
+            localStorage.setItem('eagleeye_user', JSON.stringify(currentUser));
+            updateStats();
+        } else {
+            // Fallback: update localStorage manually
+            currentUser.tests_used = (currentUser.tests_used || 0) + 1;
+            localStorage.setItem('eagleeye_user', JSON.stringify(currentUser));
+            updateStats();
         }
-    }, 5000);
+        
+        // Step 4: Run test
+        await fetch(TESTING_WEBHOOK_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                email: currentUser.email,
+                url: websiteUrl,
+                package: currentUser.plan_type || 'free',
+                subscription: false
+            })
+        });
+        
+        // Show success
+        alertBox.className = 'alert alert-success';
+        alertBox.textContent = '✅ Test started successfully! You\'ll receive the report via email within 24 hours.';
+        alertBox.classList.remove('hidden');
+        
+        document.getElementById('websiteUrl').value = '';
+        
+        setTimeout(() => {
+            if (alertBox.classList.contains('alert-success')) {
+                alertBox.classList.add('hidden');
+            }
+        }, 5000);
+        
+    } catch (error) {
+        console.error('Error:', error);
+        
+        // Fallback: update localStorage anyway
+        currentUser.tests_used = (currentUser.tests_used || 0) + 1;
+        localStorage.setItem('eagleeye_user', JSON.stringify(currentUser));
+        updateStats();
+        
+        alertBox.className = 'alert alert-success';
+        alertBox.textContent = '✅ Test started! Results will be sent via email.';
+        alertBox.classList.remove('hidden');
+        
+        setTimeout(() => alertBox.classList.add('hidden'), 5000);
+    }
     
     testBtn.disabled = false;
     testBtn.textContent = '🚀 Start Test';
