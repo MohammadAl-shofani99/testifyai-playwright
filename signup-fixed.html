@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up - EagleEye</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            padding: 50px 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 500px;
+            width: 100%;
+            animation: slideIn 0.5s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .logo {
+            font-size: 3em;
+            margin-bottom: 10px;
+        }
+
+        .header h1 {
+            color: #667eea;
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+
+        .free-badge {
+            display: inline-block;
+            background: #10b981;
+            color: white;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: 600;
+            margin-top: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+            font-size: 0.95em;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .form-group input.error {
+            border-color: #ef4444;
+        }
+
+        .form-group input.success {
+            border-color: #10b981;
+        }
+
+        .error-message {
+            color: #ef4444;
+            font-size: 0.85em;
+            margin-top: 5px;
+            display: none;
+        }
+
+        .error-message.show {
+            display: block;
+        }
+
+        /* Password Strength Indicator */
+        .password-strength {
+            height: 4px;
+            background: #e5e7eb;
+            border-radius: 2px;
+            margin-top: 8px;
+            overflow: hidden;
+        }
+
+        .password-strength-bar {
+            height: 100%;
+            width: 0%;
+            transition: all 0.3s;
+            border-radius: 2px;
+        }
+
+        .strength-weak { 
+            width: 33%; 
+            background: #ef4444; 
+        }
+
+        .strength-medium { 
+            width: 66%; 
+            background: #f59e0b; 
+        }
+
+        .strength-strong { 
+            width: 100%; 
+            background: #10b981; 
+        }
+
+        .strength-text {
+            font-size: 0.85em;
+            margin-top: 5px;
+            color: #666;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 10px;
+        }
+
+        .btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .divider {
+            text-align: center;
+            margin: 30px 0;
+            color: #666;
+            position: relative;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            width: 45%;
+            height: 1px;
+            background: #e5e7eb;
+        }
+
+        .divider::before { left: 0; }
+        .divider::after { right: 0; }
+
+        .login-link {
+            text-align: center;
+            color: #666;
+            margin-top: 20px;
+        }
+
+        .login-link a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .login-link a:hover {
+            text-decoration: underline;
+        }
+
+        .back-link {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .back-link a {
+            color: #667eea;
+            text-decoration: none;
+            font-size: 0.95em;
+        }
+
+        .back-link a:hover {
+            text-decoration: underline;
+        }
+
+        /* Loading Spinner */
+        .spinner {
+            display: none;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .btn.loading .btn-text { display: none; }
+        .btn.loading .spinner { display: block; }
+
+        .success-message {
+            background: #d1fae5;
+            color: #065f46;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: none;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .success-message.show {
+            display: block;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 40px 30px;
+            }
+
+            .header h1 {
+                font-size: 1.8em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">🦅</div>
+            <h1>Create Your Account</h1>
+            <div class="free-badge">🎉 Get 3 Free Tests</div>
+        </div>
+
+        <div class="success-message" id="successMessage">
+            ✅ Account created successfully! Redirecting to dashboard...
+        </div>
+
+        <form id="signupForm">
+            <div class="form-group">
+                <label for="email">📧 Email Address</label>
+                <input 
+                    type="email" 
+                    id="email" 
+                    name="email" 
+                    placeholder="your@email.com" 
+                    required
+                >
+                <div class="error-message" id="emailError">Please enter a valid email address</div>
+            </div>
+
+            <div class="form-group">
+                <label for="password">🔒 Password</label>
+                <input 
+                    type="password" 
+                    id="password" 
+                    name="password" 
+                    placeholder="Create a strong password" 
+                    required
+                >
+                <div class="password-strength">
+                    <div class="password-strength-bar" id="strengthBar"></div>
+                </div>
+                <div class="strength-text" id="strengthText"></div>
+                <div class="error-message" id="passwordError">Password must be at least 8 characters</div>
+            </div>
+
+            <div class="form-group">
+                <label for="confirmPassword">🔒 Confirm Password</label>
+                <input 
+                    type="password" 
+                    id="confirmPassword" 
+                    name="confirmPassword" 
+                    placeholder="Re-enter your password" 
+                    required
+                >
+                <div class="error-message" id="confirmError">Passwords do not match</div>
+            </div>
+
+            <button type="submit" class="btn" id="submitBtn">
+                <span class="btn-text">Create Account</span>
+                <div class="spinner"></div>
+            </button>
+        </form>
+
+        <div class="login-link">
+            Already have an account? <a href="login.html">Login here</a>
+        </div>
+
+        <div class="back-link">
+            <a href="landing.html">← Back to Home</a>
+        </div>
+    </div>
+
+    <script>
+        const form = document.getElementById('signupForm');
+        const emailInput = document.getElementById('email');
+        const passwordInput = document.getElementById('password');
+        const confirmPasswordInput = document.getElementById('confirmPassword');
+        const submitBtn = document.getElementById('submitBtn');
+        const successMessage = document.getElementById('successMessage');
+
+        // n8n Webhook URL
+        const WEBHOOK_URL = '/.netlify/functions/auth-proxy';
+
+        // Email Validation
+        emailInput.addEventListener('blur', () => {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(emailInput.value)) {
+                emailInput.classList.add('error');
+                emailInput.classList.remove('success');
+                document.getElementById('emailError').classList.add('show');
+            } else {
+                emailInput.classList.remove('error');
+                emailInput.classList.add('success');
+                document.getElementById('emailError').classList.remove('show');
+            }
+        });
+
+        // Password Strength Checker
+        passwordInput.addEventListener('input', () => {
+            const password = passwordInput.value;
+            const strengthBar = document.getElementById('strengthBar');
+            const strengthText = document.getElementById('strengthText');
+
+            // Clear previous classes
+            strengthBar.className = 'password-strength-bar';
+
+            if (password.length === 0) {
+                strengthText.textContent = '';
+                return;
+            }
+
+            let strength = 0;
+            
+            // Length check
+            if (password.length >= 8) strength++;
+            if (password.length >= 12) strength++;
+            
+            // Complexity checks
+            if (/[a-z]/.test(password) && /[A-Z]/.test(password)) strength++;
+            if (/[0-9]/.test(password)) strength++;
+            if (/[^a-zA-Z0-9]/.test(password)) strength++;
+
+            // Set strength level
+            if (strength <= 2) {
+                strengthBar.classList.add('strength-weak');
+                strengthText.textContent = 'Weak password';
+                strengthText.style.color = '#ef4444';
+            } else if (strength <= 4) {
+                strengthBar.classList.add('strength-medium');
+                strengthText.textContent = 'Medium strength';
+                strengthText.style.color = '#f59e0b';
+            } else {
+                strengthBar.classList.add('strength-strong');
+                strengthText.textContent = 'Strong password!';
+                strengthText.style.color = '#10b981';
+            }
+        });
+
+        // Password Match Check
+        confirmPasswordInput.addEventListener('input', () => {
+            if (confirmPasswordInput.value === passwordInput.value) {
+                confirmPasswordInput.classList.remove('error');
+                confirmPasswordInput.classList.add('success');
+                document.getElementById('confirmError').classList.remove('show');
+            } else {
+                confirmPasswordInput.classList.add('error');
+                confirmPasswordInput.classList.remove('success');
+                document.getElementById('confirmError').classList.add('show');
+            }
+        });
+
+        // Form Submission
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const email = emailInput.value.trim();
+            const password = passwordInput.value;
+            const confirmPassword = confirmPasswordInput.value;
+
+            // Validation
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            
+            if (!emailRegex.test(email)) {
+                emailInput.classList.add('error');
+                document.getElementById('emailError').classList.add('show');
+                return;
+            }
+
+            if (password.length < 8) {
+                passwordInput.classList.add('error');
+                document.getElementById('passwordError').classList.add('show');
+                return;
+            }
+
+            if (password !== confirmPassword) {
+                confirmPasswordInput.classList.add('error');
+                document.getElementById('confirmError').classList.add('show');
+                return;
+            }
+
+            // Show loading
+            submitBtn.disabled = true;
+            submitBtn.classList.add('loading');
+
+            try {
+                // Send to n8n webhook
+                const response = await fetch(WEBHOOK_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        action: 'signup',
+                        email: email,
+                        password: password,
+                        free_tests: 3,
+                        tests_used: 0,
+                        subscription_status: 'trial',
+                        created_date: new Date().toISOString(),
+                        timestamp: new Date().toISOString()
+                    })
+                });
+
+                const data = await response.json();
+                
+                // Check if signup was successful
+                if (data.success !== false) {
+                    // Store user data in localStorage
+                    localStorage.setItem('eagleeye_user', JSON.stringify({
+                        email: email,
+                        free_tests: 3,
+                        tests_used: 0,
+                        subscription_status: 'trial',
+                        logged_in: true
+                    }));
+
+                    // Show success message
+                    successMessage.classList.add('show');
+                    form.style.display = 'none';
+
+                    // Redirect to dashboard after 2 seconds
+                    setTimeout(() => {
+                        window.location.href = 'dashboard-update.html';
+                    }, 2000);
+                } else {
+                    // Email already exists or other error
+                    throw new Error(data.message || 'Signup failed');
+                }
+
+            } catch (error) {
+                console.error('Error:', error);
+                alert('❌ ' + (error.message || 'Something went wrong. Please try again.'));
+                submitBtn.disabled = false;
+                submitBtn.classList.remove('loading');
+            }
+        });
+    </script>
+</body>
+</html>
