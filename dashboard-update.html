@@ -207,15 +207,25 @@
             font-weight: 600;
         }
 
-        .form-group input {
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
             width: 100%;
             padding: 15px;
             border: 2px solid #e5e7eb;
             border-radius: 10px;
             font-size: 16px;
+            font-family: inherit;
         }
 
-        .form-group input:focus {
+        .form-group textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
             outline: none;
             border-color: #667eea;
             box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
@@ -244,6 +254,15 @@
             cursor: not-allowed;
         }
 
+        .btn-secondary {
+            background: #6b7280;
+            margin-top: 10px;
+        }
+
+        .btn-secondary:hover:not(:disabled) {
+            background: #4b5563;
+        }
+
         .upgrade-cta {
             background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
             color: white;
@@ -270,6 +289,109 @@
             color: #d97706;
         }
 
+        /* Advanced Options Toggle */
+        .advanced-toggle {
+            background: #e0e7ff;
+            padding: 15px 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            margin: 20px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s;
+        }
+
+        .advanced-toggle:hover {
+            background: #c7d2fe;
+        }
+
+        .advanced-toggle span {
+            font-weight: 600;
+            color: #4338ca;
+        }
+
+        .advanced-toggle .arrow {
+            font-size: 1.2em;
+            transition: transform 0.3s;
+        }
+
+        .advanced-toggle.active .arrow {
+            transform: rotate(180deg);
+        }
+
+        .advanced-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+        }
+
+        .advanced-content.active {
+            max-height: 2000px;
+            transition: max-height 0.5s ease-in;
+        }
+
+        /* Scenario Item */
+        .scenario-item {
+            background: white;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 15px;
+            position: relative;
+        }
+
+        .scenario-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .scenario-number {
+            font-weight: 600;
+            color: #667eea;
+            font-size: 1.1em;
+        }
+
+        .remove-scenario {
+            background: #ef4444;
+            color: white;
+            border: none;
+            padding: 5px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: background 0.3s;
+        }
+
+        .remove-scenario:hover {
+            background: #dc2626;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 15px;
+        }
+
+        .add-scenario-btn {
+            background: #10b981;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            margin: 15px 0;
+            transition: all 0.3s;
+        }
+
+        .add-scenario-btn:hover {
+            background: #059669;
+            transform: translateY(-2px);
+        }
+
         @media (max-width: 768px) {
             .header {
                 flex-direction: column;
@@ -282,6 +404,10 @@
 
             .user-info {
                 width: 100%;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
             }
         }
     </style>
@@ -348,7 +474,7 @@
                 
                 <form id="testForm">
                     <div class="form-group">
-                        <label for="websiteUrl">🌐 Website URL</label>
+                        <label for="websiteUrl">🌐 Website URL *</label>
                         <input 
                             type="url" 
                             id="websiteUrl" 
@@ -356,6 +482,39 @@
                             required
                         >
                     </div>
+
+                    <!-- Advanced Options Toggle -->
+                    <div class="advanced-toggle" onclick="toggleAdvanced()">
+                        <span>⚙️ Advanced Options (Custom Test Scenarios)</span>
+                        <span class="arrow">▼</span>
+                    </div>
+
+                    <!-- Advanced Content -->
+                    <div class="advanced-content" id="advancedContent">
+                        <div class="form-group">
+                            <label>📝 Test Notes (Optional)</label>
+                            <textarea 
+                                id="testNotes" 
+                                placeholder="Add any specific notes about this test..."
+                            ></textarea>
+                        </div>
+
+                        <h4 style="margin: 20px 0 15px 0; color: #667eea; font-size: 1.1em;">
+                            🎯 Custom Test Scenarios
+                        </h4>
+                        <p style="color: #666; margin-bottom: 20px; font-size: 0.95em;">
+                            Add specific scenarios you want to test on your website. Our AI will focus on these areas.
+                        </p>
+
+                        <div id="scenariosContainer">
+                            <!-- Scenarios will be added here dynamically -->
+                        </div>
+
+                        <button type="button" class="add-scenario-btn" onclick="addScenario()">
+                            ➕ Add Test Scenario
+                        </button>
+                    </div>
+
                     <button type="submit" class="btn" id="testBtn">
                         🚀 Start Test
                     </button>
@@ -373,11 +532,12 @@
     </div>
 
     <script>
-        // n8n Webhook URLs
+        // Netlify Function URLs
         const TESTING_WEBHOOK_URL = '/.netlify/functions/test-proxy';
         const AUTH_WEBHOOK_URL = '/.netlify/functions/auth-proxy';
 
         let currentUser = null;
+        let scenarioCount = 0;
 
         // Check Auth
         function checkAuth() {
@@ -454,106 +614,186 @@
             }
         }
 
-        // Test Form
-            document.getElementById('testForm').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    
-    const websiteUrl = document.getElementById('websiteUrl').value;
-    const testBtn = document.getElementById('testBtn');
-    const alertBox = document.getElementById('dashboardAlert');
-    
-    const remaining = (currentUser.free_tests || 3) - (currentUser.tests_used || 0);
-    if (remaining <= 0) {
-        alert('❌ You\'ve used all your free tests!');
-        return;
-    }
-    
-    testBtn.disabled = true;
-    testBtn.textContent = '⏳ Starting test...';
-    
-    try {
-        // Step 1: Update counter in Google Sheet
-        const updateResponse = await fetch(AUTH_WEBHOOK_URL, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                action: 'update_tests',
-                email: currentUser.email
-            })
-        });
-        
-        const updateData = await updateResponse.json();
-        console.log('Update response:', updateData);
-        
-        // Step 2: Get fresh data from Google Sheet
-        const getUserResponse = await fetch(AUTH_WEBHOOK_URL, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                action: 'get_user_data',
-                email: currentUser.email
-            })
-        });
-        
-        const userData = await getUserResponse.json();
-        console.log('User data:', userData);
-        
-        // Step 3: Update localStorage from Google Sheet
-        if (userData.success) {
-            currentUser.tests_used = parseInt(userData.tests_used) || 0;
-            currentUser.free_tests = parseInt(userData.free_tests) || 3;
-            localStorage.setItem('eagleeye_user', JSON.stringify(currentUser));
-            updateStats();
-        } else {
-            // Fallback: update localStorage manually
-            currentUser.tests_used = (currentUser.tests_used || 0) + 1;
-            localStorage.setItem('eagleeye_user', JSON.stringify(currentUser));
-            updateStats();
+        // Toggle Advanced Options
+        function toggleAdvanced() {
+            const toggle = document.querySelector('.advanced-toggle');
+            const content = document.getElementById('advancedContent');
+            
+            toggle.classList.toggle('active');
+            content.classList.toggle('active');
         }
-        
-        // Step 4: Run test
-        await fetch(TESTING_WEBHOOK_URL, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                email: currentUser.email,
-                url: websiteUrl,
-                package: currentUser.plan_type || 'free',
-                subscription: false
-            })
-        });
-        
-        // Show success
-        alertBox.className = 'alert alert-success';
-        alertBox.textContent = '✅ Test started successfully! You\'ll receive the report via email within 24 hours.';
-        alertBox.classList.remove('hidden');
-        
-        document.getElementById('websiteUrl').value = '';
-        
-        setTimeout(() => {
-            if (alertBox.classList.contains('alert-success')) {
-                alertBox.classList.add('hidden');
+
+        // Add Scenario
+        function addScenario() {
+            scenarioCount++;
+            const container = document.getElementById('scenariosContainer');
+            
+            const scenarioHTML = `
+                <div class="scenario-item" id="scenario-${scenarioCount}">
+                    <div class="scenario-header">
+                        <span class="scenario-number">Scenario ${scenarioCount}</span>
+                        <button type="button" class="remove-scenario" onclick="removeScenario(${scenarioCount})">
+                            ✕ Remove
+                        </button>
+                    </div>
+                    <div class="form-group">
+                        <label>Test Description</label>
+                        <input 
+                            type="text" 
+                            class="scenario-description"
+                            placeholder="E.g., Login functionality should work"
+                        >
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Expected Result</label>
+                            <input 
+                                type="text" 
+                                class="scenario-expected"
+                                placeholder="E.g., User can login successfully"
+                            >
+                        </div>
+                        <div class="form-group">
+                            <label>Priority</label>
+                            <select class="scenario-priority">
+                                <option value="high">🔴 High</option>
+                                <option value="medium" selected>🟡 Medium</option>
+                                <option value="low">🟢 Low</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            container.insertAdjacentHTML('beforeend', scenarioHTML);
+        }
+
+        // Remove Scenario
+        function removeScenario(id) {
+            const scenario = document.getElementById(`scenario-${id}`);
+            if (scenario) {
+                scenario.remove();
             }
-        }, 5000);
-        
-    } catch (error) {
-        console.error('Error:', error);
-        
-        // Fallback: update localStorage anyway
-        currentUser.tests_used = (currentUser.tests_used || 0) + 1;
-        localStorage.setItem('eagleeye_user', JSON.stringify(currentUser));
-        updateStats();
-        
-        alertBox.className = 'alert alert-success';
-        alertBox.textContent = '✅ Test started! Results will be sent via email.';
-        alertBox.classList.remove('hidden');
-        
-        setTimeout(() => alertBox.classList.add('hidden'), 5000);
-    }
-    
-    testBtn.disabled = false;
-    testBtn.textContent = '🚀 Start Test';
-});
+        }
+
+        // Collect Scenarios
+        function collectScenarios() {
+            const scenarios = [];
+            const scenarioItems = document.querySelectorAll('.scenario-item');
+            
+            scenarioItems.forEach((item, index) => {
+                const description = item.querySelector('.scenario-description').value;
+                const expected = item.querySelector('.scenario-expected').value;
+                const priority = item.querySelector('.scenario-priority').value;
+                
+                if (description || expected) {
+                    scenarios.push({
+                        id: index + 1,
+                        description: description,
+                        expected: expected,
+                        priority: priority
+                    });
+                }
+            });
+            
+            return scenarios;
+        }
+
+        // Test Form Submission
+        document.getElementById('testForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const websiteUrl = document.getElementById('websiteUrl').value;
+            const testNotes = document.getElementById('testNotes').value;
+            const scenarios = collectScenarios();
+            const testBtn = document.getElementById('testBtn');
+            const alertBox = document.getElementById('dashboardAlert');
+            
+            const remaining = (currentUser.free_tests || 3) - (currentUser.tests_used || 0);
+            if (remaining <= 0) {
+                alert('❌ You\'ve used all your free tests!');
+                return;
+            }
+            
+            testBtn.disabled = true;
+            testBtn.textContent = '⏳ Starting test...';
+            
+            try {
+                // Step 1: Update counter
+                const updateResponse = await fetch(AUTH_WEBHOOK_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        action: 'update_tests',
+                        email: currentUser.email
+                    })
+                });
+                
+                const updateData = await updateResponse.json();
+                console.log('Update response:', updateData);
+                
+                // Step 2: Get fresh data
+                const getUserResponse = await fetch(AUTH_WEBHOOK_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        action: 'get_user_data',
+                        email: currentUser.email
+                    })
+                });
+                
+                const userData = await getUserResponse.json();
+                console.log('User data:', userData);
+                
+                // Update from server
+                if (userData.success) {
+                    currentUser.tests_used = parseInt(userData.tests_used) || 0;
+                    currentUser.free_tests = parseInt(userData.free_tests) || 3;
+                    localStorage.setItem('eagleeye_user', JSON.stringify(currentUser));
+                    updateStats();
+                }
+                
+                // Step 3: Run test with scenarios
+                await fetch(TESTING_WEBHOOK_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        email: currentUser.email,
+                        url: websiteUrl,
+                        package: currentUser.plan_type || 'free',
+                        subscription: false,
+                        test_notes: testNotes,
+                        custom_scenarios: scenarios
+                    })
+                });
+                
+                // Success
+                alertBox.className = 'alert alert-success';
+                alertBox.textContent = scenarios.length > 0 
+                    ? `✅ Test started with ${scenarios.length} custom scenario(s)! Results via email.`
+                    : '✅ Test started! You\'ll receive results via email.';
+                alertBox.classList.remove('hidden');
+                
+                // Clear form
+                document.getElementById('websiteUrl').value = '';
+                document.getElementById('testNotes').value = '';
+                document.getElementById('scenariosContainer').innerHTML = '';
+                scenarioCount = 0;
+                
+                setTimeout(() => {
+                    if (alertBox.classList.contains('alert-success')) {
+                        alertBox.classList.add('hidden');
+                    }
+                }, 5000);
+                
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error starting test. Please try again.');
+            }
+            
+            testBtn.disabled = false;
+            testBtn.textContent = '🚀 Start Test';
+        });
 
         // Logout
         function logout() {
@@ -563,7 +803,7 @@
             }
         }
 
-        // Init
+        // Initialize
         window.addEventListener('DOMContentLoaded', () => {
             initDashboard();
         });
