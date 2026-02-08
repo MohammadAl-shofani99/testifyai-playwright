@@ -223,9 +223,9 @@
             }
 
             if (!userData.email) {
-                showError('User not logged in. Please login first.');
+                showError('User not logged in. Redirecting to dashboard...');
                 setTimeout(() => {
-                    window.location.href = 'login.html';
+                    window.location.href = 'dashboard.html?session_id=' + sessionId;
                 }, 2000);
                 return;
             }
@@ -267,13 +267,21 @@
 
                     // Clear selected plan
                     sessionStorage.removeItem('selected_plan');
+                    
+                    // Auto redirect to dashboard after 5 seconds
+                    setTimeout(() => {
+                        window.location.href = 'dashboard.html';
+                    }, 5000);
                 } else {
                     showError('Failed to activate subscription. Please contact support.');
                 }
 
             } catch (error) {
                 console.error('Error:', error);
-                showError('An error occurred. Please contact support with session ID: ' + sessionId);
+                showError('An error occurred. Redirecting to dashboard...');
+                setTimeout(() => {
+                    window.location.href = 'dashboard.html?session_id=' + sessionId;
+                }, 3000);
             }
         }
 
