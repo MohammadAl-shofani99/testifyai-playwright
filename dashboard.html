@@ -785,14 +785,14 @@
                 console.log('✅ Test submitted successfully!');
                 
                 // Wait 2 seconds for workflow to update Google Sheets
-                await new Promise(resolve => setTimeout(resolve, 2000));
-                
-                // Refresh data from server to get updated Tests_Used
-                console.log('🔄 Refreshing data from server...');
-                await refreshUserData(currentUser.email);
-                updateStats();
-                
-                console.log('📊 Updated stats:', currentUser);
+await new Promise(resolve => setTimeout(resolve, 2000));
+
+// Refresh data from server to get updated Tests_Used
+console.log('🔄 Refreshing data from server...');
+await refreshUserData(currentUser.email);
+updateStats();
+
+console.log('📊 Updated stats:', currentUser);
                 
                 // Success
                 alertBox.className = 'alert alert-success';
