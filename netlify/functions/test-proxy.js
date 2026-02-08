@@ -32,7 +32,7 @@ exports.handler = async (event, context) => {
         console.log('Test proxy received:', requestBody);
 
         // Forward to n8n testing webhook
-        const n8nUrl = 'https://zoro7979.app.n8n.cloud/webhook-test/978ca1c0-a94a-4598-9a5d-41d65a968b94';
+        const n8nUrl = 'https://zoro7979.app.n8n.cloud/webhook/978ca1c0-a94a-4598-9a5d-41d65a968b94';
         
         const response = await fetch(n8nUrl, {
             method: 'POST',
