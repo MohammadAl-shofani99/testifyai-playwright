@@ -732,25 +732,68 @@
                 const updateData = await updateResponse.json();
                 console.log('Update response:', updateData);
                 
-                // Step 2: Get fresh data
-                const getUserResponse = await fetch(AUTH_WEBHOOK_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        action: 'get_user_data',
-                        email: currentUser.email
-                    })
-                });
+                // Step 2: Get fresh data from auth-proxy
+                let freshDataSuccess = false;
+                try {
+                    const getUserResponse = await fetch(AUTH_WEBHOOK_URL, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            action: 'get_user_data',
+                            email: currentUser.email
+                        })
+                    });
+                    
+                    const userData = await getUserResponse.json();
+                    console.log('User data response from auth:', userData);
+                    console.log('Current tests_used before update:', currentUser.tests_used);
+                    
+                    // Update from server
+                    if (userData.success && userData.tests_used !== undefined) {
+                        console.log('Updating tests_used from', currentUser.tests_used, 'to', userData.tests_used);
+                        currentUser.tests_used = parseInt(userData.tests_used) || 0;
+                        currentUser.free_tests = parseInt(userData.free_tests) || 3;
+                        currentUser.tests_limit = parseInt(userData.tests_limit || userData.free_tests) || 3;
+                        localStorage.setItem('eagleeye_user', JSON.stringify(currentUser));
+                        console.log('localStorage updated:', currentUser);
+                        updateStats();
+                        freshDataSuccess = true;
+                    } else {
+                        console.error('Failed to get user data from auth:', userData);
+                    }
+                } catch (authError) {
+                    console.error('Auth proxy error:', authError);
+                }
                 
-                const userData = await getUserResponse.json();
-                console.log('User data:', userData);
-                
-                // Update from server
-                if (userData.success) {
-                    currentUser.tests_used = parseInt(userData.tests_used) || 0;
-                    currentUser.free_tests = parseInt(userData.free_tests) || 3;
-                    localStorage.setItem('eagleeye_user', JSON.stringify(currentUser));
-                    updateStats();
+                // Step 2.5: Fallback - Try test-proxy if auth failed
+                if (!freshDataSuccess) {
+                    try {
+                        console.log('Trying test-proxy as fallback...');
+                        const testProxyResponse = await fetch(TESTING_WEBHOOK_URL, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                action: 'get_user_stats',
+                                email: currentUser.email
+                            })
+                        });
+                        
+                        const testProxyData = await testProxyResponse.json();
+                        console.log('Test proxy response:', testProxyData);
+                        
+                        if (testProxyData.success && testProxyData.tests_used !== undefined) {
+                            currentUser.tests_used = parseInt(testProxyData.tests_used) || 0;
+                            currentUser.tests_limit = parseInt(testProxyData.tests_limit) || 3;
+                            localStorage.setItem('eagleeye_user', JSON.stringify(currentUser));
+                            updateStats();
+                        }
+                    } catch (testProxyError) {
+                        console.error('Test proxy error:', testProxyError);
+                        // Last resort: increment locally
+                        currentUser.tests_used = (parseInt(currentUser.tests_used) || 0) + 1;
+                        localStorage.setItem('eagleeye_user', JSON.stringify(currentUser));
+                        updateStats();
+                    }
                 }
                 
                 // Step 3: Run test with scenarios
