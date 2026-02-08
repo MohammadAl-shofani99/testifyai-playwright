@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EagleEye - Pricing Plans</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 60px;
+        }
+
+        .header h1 {
+            font-size: 3em;
+            margin-bottom: 15px;
+        }
+
+        .header p {
+            font-size: 1.3em;
+            opacity: 0.95;
+        }
+
+        .nav-buttons {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .nav-btn {
+            display: inline-block;
+            padding: 12px 30px;
+            margin: 0 10px;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s;
+            border: 2px solid white;
+        }
+
+        .nav-btn:hover {
+            background: white;
+            color: #667eea;
+        }
+
+        .pricing-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            margin-bottom: 60px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 20px;
+            padding: 40px 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            transition: transform 0.3s, box-shadow 0.3s;
+            position: relative;
+        }
+
+        .card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        .card.featured {
+            border: 3px solid #667eea;
+            transform: scale(1.05);
+        }
+
+        .badge {
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 600;
+        }
+
+        .card h2 {
+            font-size: 1.8em;
+            color: #333;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .price {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .price .amount {
+            font-size: 3em;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .price .period {
+            font-size: 1.1em;
+            color: #666;
+        }
+
+        .features {
+            list-style: none;
+            margin-bottom: 30px;
+        }
+
+        .features li {
+            padding: 12px 0;
+            color: #555;
+            border-bottom: 1px solid #f0f0f0;
+            display: flex;
+            align-items: center;
+        }
+
+        .features li:last-child {
+            border-bottom: none;
+        }
+
+        .features li::before {
+            content: "✓";
+            color: #10b981;
+            font-weight: bold;
+            font-size: 1.3em;
+            margin-right: 12px;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .footer {
+            text-align: center;
+            color: white;
+            margin-top: 60px;
+            opacity: 0.9;
+        }
+
+        .info-box {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 40px;
+            text-align: center;
+        }
+
+        .info-box h3 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .info-box p {
+            color: #666;
+            line-height: 1.6;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2em;
+            }
+            
+            .pricing-cards {
+                grid-template-columns: 1fr;
+            }
+            
+            .card.featured {
+                transform: scale(1);
+            }
+
+            .nav-btn {
+                display: block;
+                margin: 10px auto;
+                max-width: 200px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🦅 EagleEye</h1>
+            <p>Professional Website QA Testing with AI</p>
+        </div>
+
+        <div class="nav-buttons">
+            <a href="index.html" class="nav-btn">🏠 Home</a>
+            <a href="login.html" class="nav-btn">🔑 Login</a>
+            <a href="signup.html" class="nav-btn">🚀 Get Started</a>
+        </div>
+
+        <div class="info-box">
+            <h3>💡 How It Works</h3>
+            <p>Choose a plan → Sign up or login → Payment → Credits added to your account → Start testing!</p>
+        </div>
+
+        <div class="pricing-cards">
+            <!-- Free Trial -->
+            <div class="card">
+                <h2>🎁 Free Trial</h2>
+                <div class="price">
+                    <div class="amount">$0</div>
+                    <div class="period">forever</div>
+                </div>
+                <ul class="features">
+                    <li>3 tests total</li>
+                    <li>Custom scenarios</li>
+                    <li>PDF reports</li>
+                    <li>Email delivery</li>
+                    <li>Basic support</li>
+                </ul>
+                <button class="btn" onclick="selectPlan('free', 0, null)">Get Started Free</button>
+            </div>
+
+            <!-- Starter Plan -->
+            <div class="card">
+                <h2>🥉 Starter</h2>
+                <div class="price">
+                    <div class="amount">$19</div>
+                    <div class="period">per month</div>
+                </div>
+                <ul class="features">
+                    <li>10 tests per month</li>
+                    <li>Custom scenarios</li>
+                    <li>Advanced PDF reports</li>
+                    <li>Priority email delivery</li>
+                    <li>Email support</li>
+                </ul>
+                <button class="btn" onclick="selectPlan('starter', 19, 'https://buy.stripe.com/test_YOUR_STARTER_LINK')">Choose Starter</button>
+            </div>
+
+            <!-- Professional Plan -->
+            <div class="card featured">
+                <div class="badge">⭐ Most Popular</div>
+                <h2>🥈 Professional</h2>
+                <div class="price">
+                    <div class="amount">$49</div>
+                    <div class="period">per month</div>
+                </div>
+                <ul class="features">
+                    <li>25 tests per month</li>
+                    <li>Custom scenarios</li>
+                    <li>Premium PDF reports</li>
+                    <li>Priority email delivery</li>
+                    <li>Priority support</li>
+                    <li>Test history</li>
+                </ul>
+                <button class="btn" onclick="selectPlan('professional', 49, 'https://buy.stripe.com/test_YOUR_PRO_LINK')">Choose Professional</button>
+            </div>
+
+            <!-- Business Plan -->
+            <div class="card">
+                <h2>🥇 Business</h2>
+                <div class="price">
+                    <div class="amount">$99</div>
+                    <div class="period">per month</div>
+                </div>
+                <ul class="features">
+                    <li>60 tests per month</li>
+                    <li>Custom scenarios</li>
+                    <li>Custom reports</li>
+                    <li>Priority delivery</li>
+                    <li>Dedicated support</li>
+                    <li>API access</li>
+                    <li>White-label reports</li>
+                </ul>
+                <button class="btn" onclick="selectPlan('business', 99, 'https://buy.stripe.com/test_YOUR_BUSINESS_LINK')">Choose Business</button>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>© 2026 EagleEye. Created by Mohammad Omar. All rights reserved.</p>
+        </div>
+    </div>
+
+    <script>
+        // Check if user is logged in
+        function isLoggedIn() {
+            const userData = localStorage.getItem('eagleeye_user');
+            return userData !== null;
+        }
+
+        function selectPlan(plan, price, stripeLink) {
+            // Free plan - just redirect to signup
+            if (plan === 'free') {
+                window.location.href = 'signup.html';
+                return;
+            }
+
+            // Paid plans - check if logged in
+            if (!isLoggedIn()) {
+                // Save selected plan
+                sessionStorage.setItem('selected_plan', JSON.stringify({
+                    plan: plan,
+                    price: price,
+                    stripeLink: stripeLink
+                }));
+
+                // Redirect to signup with message
+                alert('Please sign up or login first to purchase a plan.');
+                window.location.href = 'signup.html?redirect=pricing';
+                return;
+            }
+
+            // User is logged in - proceed to payment
+            const userData = JSON.parse(localStorage.getItem('eagleeye_user'));
+            
+            // Save plan selection
+            sessionStorage.setItem('selected_plan', JSON.stringify({
+                plan: plan,
+                price: price,
+                email: userData.email
+            }));
+
+            // Redirect to Stripe with user email prefilled
+            const checkoutUrl = new URL(stripeLink);
+            checkoutUrl.searchParams.set('prefilled_email', userData.email);
+            checkoutUrl.searchParams.set('client_reference_id', userData.email);
+            
+            window.location.href = checkoutUrl.toString();
+        }
+
+        // On page load - check if returning from signup
+        window.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const fromSignup = urlParams.get('from');
+            
+            if (fromSignup === 'signup') {
+                // Check if there's a selected plan
+                const selectedPlan = sessionStorage.getItem('selected_plan');
+                if (selectedPlan) {
+                    const plan = JSON.parse(selectedPlan);
+                    // Auto-select the plan they wanted
+                    setTimeout(() => {
+                        selectPlan(plan.plan, plan.price, plan.stripeLink);
+                    }, 500);
+                }
+            }
+        });
+    </script>
+</body>
+</html>

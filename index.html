@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EagleEye - Professional Website QA Testing</title>
+    <title>EagleEye - AI-Powered Website QA Testing</title>
     <style>
         * {
             margin: 0;
@@ -15,408 +15,379 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
-            padding: 40px 20px;
+            color: white;
         }
 
-        .container {
+        /* Header */
+        .header {
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.8em;
+            font-weight: bold;
+        }
+
+        .nav-btn {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 12px 30px;
+            border: 2px solid white;
+            border-radius: 10px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+        }
+
+        .nav-btn:hover {
+            background: white;
+            color: #667eea;
+            transform: translateY(-2px);
+        }
+
+        /* Hero Section */
+        .hero {
+            text-align: center;
+            padding: 80px 20px;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .hero h1 {
+            font-size: 4em;
+            margin-bottom: 20px;
+            animation: fadeInDown 0.8s ease-out;
+        }
+
+        .hero .tagline {
+            font-size: 1.8em;
+            margin-bottom: 15px;
+            opacity: 0.95;
+            animation: fadeInDown 0.8s ease-out 0.2s backwards;
+        }
+
+        .hero .subtitle {
+            font-size: 1.3em;
+            margin-bottom: 50px;
+            opacity: 0.85;
+            animation: fadeInDown 0.8s ease-out 0.4s backwards;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+            animation: fadeInUp 0.8s ease-out 0.6s backwards;
+        }
+
+        .btn-primary {
+            background: white;
+            color: #667eea;
+            padding: 20px 50px;
+            border: none;
+            border-radius: 15px;
+            font-size: 1.3em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.15);
+            color: white;
+            padding: 20px 50px;
+            border: 2px solid white;
+            border-radius: 15px;
+            font-size: 1.3em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.25);
+            transform: translateY(-5px);
+        }
+
+        .free-badge {
+            display: inline-block;
+            background: #10b981;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.8em;
+            margin-left: 10px;
+            font-weight: 600;
+        }
+
+        /* Features Section */
+        .features {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 60px 20px;
+            margin: 40px 0;
+        }
+
+        .features-container {
             max-width: 1200px;
             margin: 0 auto;
         }
 
-        .header {
+        .features h2 {
             text-align: center;
-            color: white;
-            margin-bottom: 60px;
+            font-size: 2.5em;
+            margin-bottom: 50px;
         }
 
-        .header h1 {
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 40px;
+        }
+
+        .feature-card {
+            text-align: center;
+            padding: 30px;
+        }
+
+        .feature-icon {
             font-size: 3em;
+            margin-bottom: 20px;
+        }
+
+        .feature-card h3 {
+            font-size: 1.5em;
             margin-bottom: 15px;
         }
 
-        .header p {
-            font-size: 1.3em;
-            opacity: 0.95;
+        .feature-card p {
+            font-size: 1.1em;
+            opacity: 0.9;
+            line-height: 1.6;
         }
 
-        .pricing-cards {
+        /* How It Works */
+        .how-it-works {
+            padding: 60px 20px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .how-it-works h2 {
+            text-align: center;
+            font-size: 2.5em;
+            margin-bottom: 50px;
+        }
+
+        .steps {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 30px;
-            margin-bottom: 60px;
+            gap: 40px;
         }
 
-        .card {
-            background: white;
-            border-radius: 20px;
+        .step {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
             padding: 40px 30px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
-            transition: transform 0.3s, box-shadow 0.3s;
-            position: relative;
-        }
-
-        .card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-        }
-
-        .card.featured {
-            border: 3px solid #667eea;
-            transform: scale(1.05);
-        }
-
-        .badge {
-            position: absolute;
-            top: -15px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 8px 20px;
             border-radius: 20px;
-            font-size: 0.85em;
-            font-weight: 600;
-        }
-
-        .card h2 {
-            font-size: 1.8em;
-            color: #333;
-            margin-bottom: 15px;
             text-align: center;
+            transition: transform 0.3s;
         }
 
-        .price {
-            text-align: center;
-            margin-bottom: 30px;
+        .step:hover {
+            transform: translateY(-10px);
         }
 
-        .price .amount {
-            font-size: 3em;
-            font-weight: bold;
+        .step-number {
+            background: white;
             color: #667eea;
-        }
-
-        .price .period {
-            font-size: 1.1em;
-            color: #666;
-        }
-
-        .features {
-            list-style: none;
-            margin-bottom: 30px;
-        }
-
-        .features li {
-            padding: 12px 0;
-            color: #555;
-            border-bottom: 1px solid #f0f0f0;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
             display: flex;
             align-items: center;
-        }
-
-        .features li:last-child {
-            border-bottom: none;
-        }
-
-        .features li::before {
-            content: "✓";
-            color: #10b981;
+            justify-content: center;
+            font-size: 2em;
             font-weight: bold;
-            font-size: 1.3em;
-            margin-right: 12px;
+            margin: 0 auto 20px;
         }
 
-        .btn {
-            width: 100%;
-            padding: 18px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            border-radius: 12px;
-            font-size: 1.1em;
-            font-weight: 600;
-            cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
-
-        .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
-        }
-
-        .form-section {
-            display: none;
-            background: white;
-            border-radius: 20px;
-            padding: 40px;
-            max-width: 600px;
-            margin: 0 auto;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
-        }
-
-        .form-section.active {
-            display: block;
-        }
-
-        .form-section h3 {
-            color: #667eea;
-            margin-bottom: 10px;
-            font-size: 1.8em;
-        }
-
-        .selected-plan {
-            background: #f0f4ff;
-            padding: 15px;
-            border-radius: 10px;
-            margin-bottom: 30px;
-            color: #667eea;
-            font-weight: 600;
-        }
-
-        .form-group {
-            margin-bottom: 25px;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            color: #333;
-            font-weight: 600;
-        }
-
-        .form-group input {
-            width: 100%;
-            padding: 15px;
-            border: 2px solid #e5e7eb;
-            border-radius: 10px;
-            font-size: 16px;
-            transition: all 0.3s;
-        }
-
-        .form-group input:focus {
-            outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-        }
-
-        .btn-back {
-            background: #6b7280;
+        .step h3 {
+            font-size: 1.5em;
             margin-bottom: 15px;
         }
 
-        .footer {
-            text-align: center;
-            color: white;
-            margin-top: 60px;
+        .step p {
+            font-size: 1.1em;
             opacity: 0.9;
+            line-height: 1.6;
         }
 
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 40px 20px;
+            opacity: 0.8;
+        }
+
+        /* Animations */
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Responsive */
         @media (max-width: 768px) {
-            .header h1 {
-                font-size: 2em;
+            .hero h1 {
+                font-size: 2.5em;
             }
-            
-            .pricing-cards {
-                grid-template-columns: 1fr;
+
+            .hero .tagline {
+                font-size: 1.3em;
             }
-            
-            .card.featured {
-                transform: scale(1);
+
+            .hero .subtitle {
+                font-size: 1.1em;
+            }
+
+            .cta-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .btn-primary, .btn-secondary {
+                width: 100%;
+                max-width: 300px;
+            }
+
+            .header {
+                flex-direction: column;
+                gap: 20px;
             }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h1>🦅 EagleEye</h1>
-            <p>Professional Website QA Testing with AI</p>
-        </div>
+    <!-- Header -->
+    <div class="header">
+        <div class="logo">🦅 EagleEye</div>
+        <a href="login.html" class="nav-btn">Login</a>
+    </div>
 
-        <div id="pricingSection">
-            <div class="pricing-cards">
-                <!-- Starter Plan -->
-                <div class="card">
-                    <h2>🥉 Starter</h2>
-                    <div class="price">
-                        <div class="amount">$49</div>
-                        <div class="period">per month</div>
-                    </div>
-                    <ul class="features">
-                        <li>10 tests per month</li>
-                        <li>Up to 10 pages per test</li>
-                        <li>Basic PDF reports</li>
-                        <li>Email delivery</li>
-                        <li>48-hour turnaround</li>
-                        <li>Email support</li>
-                    </ul>
-                    <button class="btn" onclick="selectPlan('starter', 49, 'STARTER_STRIPE_LINK')">Choose Starter</button>
-                </div>
-
-                <!-- Professional Plan -->
-                <div class="card featured">
-                    <div class="badge">⭐ Most Popular</div>
-                    <h2>🥈 Professional</h2>
-                    <div class="price">
-                        <div class="amount">$99</div>
-                        <div class="period">per month</div>
-                    </div>
-                    <ul class="features">
-                        <li>25 tests per month</li>
-                        <li>Up to 30 pages per test</li>
-                        <li>Advanced PDF reports</li>
-                        <li>Priority email delivery</li>
-                        <li>24-hour turnaround</li>
-                        <li>Priority support</li>
-                        <li>API access</li>
-                    </ul>
-                    <button class="btn" onclick="selectPlan('professional', 99, 'PRO_STRIPE_LINK')">Choose Professional</button>
-                </div>
-
-                <!-- Business Plan -->
-                <div class="card">
-                    <h2>🥇 Business</h2>
-                    <div class="price">
-                        <div class="amount">$199</div>
-                        <div class="period">per month</div>
-                    </div>
-                    <ul class="features">
-                        <li>60 tests per month</li>
-                        <li>Up to 100 pages per test</li>
-                        <li>Premium PDF reports</li>
-                        <li>Screenshots included</li>
-                        <li>12-hour turnaround</li>
-                        <li>Dedicated support</li>
-                        <li>API access</li>
-                        <li>White-label reports</li>
-                    </ul>
-                    <button class="btn" onclick="selectPlan('business', 199, 'BUSINESS_STRIPE_LINK')">Choose Business</button>
-                </div>
-
-                <!-- Enterprise Plan -->
-                <div class="card">
-                    <h2>💎 Enterprise</h2>
-                    <div class="price">
-                        <div class="amount">$499</div>
-                        <div class="period">per month</div>
-                    </div>
-                    <ul class="features">
-                        <li>Unlimited tests</li>
-                        <li>Unlimited pages</li>
-                        <li>Custom reports</li>
-                        <li>Video recordings</li>
-                        <li>6-hour turnaround</li>
-                        <li>Account manager</li>
-                        <li>Custom integrations</li>
-                        <li>SLA guarantee</li>
-                    </ul>
-                    <button class="btn" onclick="selectPlan('enterprise', 499, 'ENTERPRISE_STRIPE_LINK')">Choose Enterprise</button>
-                </div>
-            </div>
-        </div>
-
-        <div id="formSection" class="form-section">
-            <h3>Complete Your Subscription</h3>
-            <div class="selected-plan" id="selectedPlanText"></div>
-            
-            <form id="subscriptionForm">
-                <div class="form-group">
-                    <label for="websiteUrl">🌐 Your Website URL</label>
-                    <input 
-                        type="url" 
-                        id="websiteUrl" 
-                        name="websiteUrl" 
-                        placeholder="https://example.com" 
-                        required
-                    >
-                </div>
-
-                <div class="form-group">
-                    <label for="email">📧 Your Email</label>
-                    <input 
-                        type="email" 
-                        id="email" 
-                        name="email" 
-                        placeholder="your@email.com" 
-                        required
-                    >
-                    <small style="color: #666; display: block; margin-top: 5px;">
-                        You'll receive test reports at this email
-                    </small>
-                </div>
-
-                <button type="button" class="btn btn-back" onclick="goBack()">
-                    ← Back to Plans
-                </button>
-                
-                <button type="submit" class="btn">
-                    Proceed to Payment →
-                </button>
-            </form>
-        </div>
-
-        <div class="footer">
-                        <p style="font-size: 0.9em; opacity: 0.7;">© 2026 EagleEye. Created by Mohammad Omar. All rights reserved.</p>
+    <!-- Hero Section -->
+    <div class="hero">
+        <h1>🦅 EagleEye</h1>
+        <div class="tagline">AI-Powered Website QA Testing</div>
+        <div class="subtitle">Catch bugs before your users do. Automated testing with professional reports.</div>
+        
+        <div class="cta-buttons">
+            <a href="signup.html" class="btn-primary">
+                Get Started <span class="free-badge">3 FREE TESTS</span>
+            </a>
+            <a href="login.html" class="btn-secondary">Login</a>
         </div>
     </div>
 
-    <script>
-        let selectedPackage = null;
-        let selectedPrice = 0;
-        let stripeLink = '';
+    <!-- Features Section -->
+    <div class="features">
+        <div class="features-container">
+            <h2>Why Choose EagleEye?</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">🤖</div>
+                    <h3>AI-Powered Testing</h3>
+                    <p>Smart test scenarios generated by advanced AI to catch issues humans might miss</p>
+                </div>
 
-        // الـ Stripe Payment Links - حط روابطك هون!
-        const stripeLinks = {
-            'STARTER_STRIPE_LINK': 'https://buy.stripe.com/test_aFa3cxfqgeAR38xf3M6oo00',
-            'PRO_STRIPE_LINK': 'https://buy.stripe.com/test_fZu5kF0vm8ct10p9Js6oo01',
-            'BUSINESS_STRIPE_LINK': 'https://buy.stripe.com/test_eVq00lemcakBaAZ6xg6oo02',
-            'ENTERPRISE_STRIPE_LINK': 'https://buy.stripe.com/test_5kQ6oJ6TK2S99wV1cW6oo03'
-        };
+                <div class="feature-card">
+                    <div class="feature-icon">📊</div>
+                    <h3>Professional Reports</h3>
+                    <p>Detailed PDF reports with screenshots and actionable insights</p>
+                </div>
 
-        function selectPlan(plan, price, linkKey) {
-            selectedPackage = plan;
-            selectedPrice = price;
-            stripeLink = stripeLinks[linkKey];
-            
-            // عرض اسم الباقة
-            const planNames = {
-               'starter': 'Starter',
-               'professional': 'Professional',
-               'business': 'Business',
-               'enterprise': 'Enterprise'
-            };
-            
-            document.getElementById('selectedPlanText').textContent = 
-                `Selected: ${planNames[plan]} Plan - $${price}/month`;
-            
-            // إخفاء الباقات وعرض الفورم
-            document.getElementById('pricingSection').style.display = 'none';
-            document.getElementById('formSection').classList.add('active');
-        }
+                <div class="feature-card">
+                    <div class="feature-icon">⚡</div>
+                    <h3>Fast Turnaround</h3>
+                    <p>Get your test results within 24 hours - no waiting weeks</p>
+                </div>
 
-        function goBack() {
-            document.getElementById('pricingSection').style.display = 'block';
-            document.getElementById('formSection').classList.remove('active');
-        }
+                <div class="feature-card">
+                    <div class="feature-icon">💰</div>
+                    <h3>Cost Effective</h3>
+                    <p>Save thousands compared to hiring QA teams or manual testing</p>
+                </div>
+            </div>
+        </div>
+    </div>
 
-        document.getElementById('subscriptionForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            const websiteUrl = document.getElementById('websiteUrl').value;
-            const email = document.getElementById('email').value;
-            
-            // حفظ البيانات في localStorage
-            localStorage.setItem('testifyai_subscription', JSON.stringify({
-                url: websiteUrl,
-                email: email,
-                package: selectedPackage,
-                price: selectedPrice,
-                timestamp: new Date().toISOString()
-            }));
-            
-            // Redirect to Stripe
-            window.location.href = stripeLink;
-        });
-    </script>
+    <!-- How It Works -->
+    <div class="how-it-works">
+        <h2>How It Works</h2>
+        <div class="steps">
+            <div class="step">
+                <div class="step-number">1</div>
+                <h3>Sign Up</h3>
+                <p>Create your free account in 30 seconds. No credit card required for trial.</p>
+            </div>
+
+            <div class="step">
+                <div class="step-number">2</div>
+                <h3>Enter Your Website</h3>
+                <p>Provide your website URL and let our AI analyze your pages.</p>
+            </div>
+
+            <div class="step">
+                <div class="step-number">3</div>
+                <h3>Get Your Report</h3>
+                <p>Receive a detailed PDF report with bugs, issues, and recommendations.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Final CTA -->
+    <div style="text-align: center; padding: 40px 20px;">
+        <h2 style="font-size: 2.5em; margin-bottom: 30px;">Ready to Start Testing?</h2>
+        <a href="signup.html" class="btn-primary" style="font-size: 1.5em;">
+            Get 3 Free Tests Now 🚀
+        </a>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+        <p style="font-size: 1em;">© 2026 EagleEye. Created by Mohammad Omar. All rights reserved.</p>
+    </div>
 </body>
 </html>

@@ -318,7 +318,7 @@
         </div>
 
         <div class="back-link">
-            <a href="landing.html">← Back to Home</a>
+            <a href="index.html">← Back to Home</a>
         </div>
     </div>
 
@@ -340,7 +340,7 @@
             const userData = JSON.parse(savedUser);
             if (userData.logged_in) {
                 // Already logged in, redirect to dashboard
-                window.location.href = 'dashboard-update.html';
+                window.location.href = 'dashboard.html';
             }
         }
 
@@ -436,7 +436,7 @@
 
                     // Redirect to dashboard after 1.5 seconds
                     setTimeout(() => {
-                        window.location.href = 'dashboard-update.html';
+                        window.location.href = 'dashboard.html';
                     }, 1500);
 
                 } else {

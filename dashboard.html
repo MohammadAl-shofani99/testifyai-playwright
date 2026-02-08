@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - EagleEye</title>
+    <title>Run Test - EagleEye</title>
     <style>
         * {
             margin: 0;
@@ -69,6 +69,7 @@
         .logout-btn:hover {
             background: white;
             color: #667eea;
+            transform: translateY(-2px);
         }
 
         .card {
@@ -77,6 +78,12 @@
             padding: 40px;
             box-shadow: 0 10px 40px rgba(0,0,0,0.2);
             margin-bottom: 30px;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .plan-info {
@@ -113,6 +120,12 @@
             padding: 25px;
             border-radius: 12px;
             text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         }
 
         .stat-card h3 {
@@ -216,6 +229,7 @@
             border-radius: 10px;
             font-size: 16px;
             font-family: inherit;
+            transition: all 0.3s ease;
         }
 
         .form-group textarea {
@@ -229,6 +243,15 @@
             outline: none;
             border-color: #667eea;
             box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        /* URL Validation Colors */
+        .form-group input.valid {
+            border-color: #10b981;
+        }
+
+        .form-group input.invalid {
+            border-color: #ef4444;
         }
 
         .btn {
@@ -246,7 +269,11 @@
 
         .btn:hover:not(:disabled) {
             transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn:active:not(:disabled) {
+            transform: translateY(0);
         }
 
         .btn:disabled {
@@ -255,50 +282,27 @@
         }
 
         .btn-secondary {
-            background: #6b7280;
-            margin-top: 10px;
+            background: transparent;
+            border: 2px solid #667eea;
+            color: #667eea;
+            margin-top: 15px;
         }
 
-        .btn-secondary:hover:not(:disabled) {
-            background: #4b5563;
-        }
-
-        .upgrade-cta {
-            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+        .btn-secondary:hover {
+            background: #667eea;
             color: white;
-            padding: 30px;
-            border-radius: 12px;
-            text-align: center;
-            margin-bottom: 30px;
         }
 
-        .upgrade-cta h3 {
-            font-size: 1.8em;
-            margin-bottom: 10px;
-        }
-
-        .upgrade-cta p {
-            margin-bottom: 20px;
-            font-size: 1.1em;
-        }
-
-        .upgrade-cta .btn {
-            max-width: 300px;
-            margin: 0 auto;
-            background: white;
-            color: #d97706;
-        }
-
-        /* Advanced Options Toggle */
         .advanced-toggle {
             background: #e0e7ff;
-            padding: 15px 20px;
+            color: #4338ca;
+            padding: 15px;
             border-radius: 10px;
             cursor: pointer;
-            margin: 20px 0;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            margin: 20px 0;
             transition: all 0.3s;
         }
 
@@ -306,17 +310,12 @@
             background: #c7d2fe;
         }
 
-        .advanced-toggle span {
-            font-weight: 600;
-            color: #4338ca;
-        }
-
-        .advanced-toggle .arrow {
-            font-size: 1.2em;
+        .advanced-toggle::after {
+            content: '▼';
             transition: transform 0.3s;
         }
 
-        .advanced-toggle.active .arrow {
+        .advanced-toggle.active::after {
             transform: rotate(180deg);
         }
 
@@ -328,17 +327,46 @@
 
         .advanced-content.active {
             max-height: 2000px;
-            transition: max-height 0.5s ease-in;
         }
 
-        /* Scenario Item */
+        .scenario-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .add-scenario-btn {
+            background: #10b981;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .add-scenario-btn:hover {
+            background: #059669;
+            transform: translateY(-2px);
+        }
+
+        .scenario-count {
+            background: #667eea;
+            color: white;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-weight: 600;
+        }
+
         .scenario-item {
             background: white;
+            padding: 25px;
+            border-radius: 12px;
+            margin-bottom: 20px;
             border: 2px solid #e5e7eb;
-            border-radius: 10px;
-            padding: 20px;
-            margin-bottom: 15px;
-            position: relative;
+            animation: fadeIn 0.3s ease-out;
         }
 
         .scenario-header {
@@ -355,18 +383,19 @@
         }
 
         .remove-scenario {
-            background: #ef4444;
-            color: white;
+            background: #fee2e2;
+            color: #991b1b;
             border: none;
-            padding: 5px 15px;
-            border-radius: 6px;
+            padding: 8px 16px;
+            border-radius: 8px;
             cursor: pointer;
-            font-size: 0.9em;
-            transition: background 0.3s;
+            font-weight: 600;
+            transition: all 0.3s;
         }
 
         .remove-scenario:hover {
-            background: #dc2626;
+            background: #fecaca;
+            transform: scale(1.05);
         }
 
         .form-row {
@@ -375,24 +404,111 @@
             gap: 15px;
         }
 
-        .add-scenario-btn {
-            background: #10b981;
+        .upgrade-cta {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
             color: white;
-            border: none;
-            padding: 12px 25px;
+            padding: 25px;
+            border-radius: 12px;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .upgrade-cta h3 {
+            margin-bottom: 10px;
+        }
+
+        .upgrade-cta a {
+            background: white;
+            color: #d97706;
+            padding: 12px 30px;
             border-radius: 8px;
-            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 15px;
             font-weight: 600;
-            margin: 15px 0;
             transition: all 0.3s;
         }
 
-        .add-scenario-btn:hover {
-            background: #059669;
-            transform: translateY(-2px);
+        .upgrade-cta a:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
         }
 
+        /* Loading Overlay */
+        #loadingOverlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 9999;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .loading-content {
+            text-align: center;
+            color: white;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Toast Notifications */
+        #toastContainer {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 10000;
+        }
+
+        .toast {
+            background: white;
+            padding: 20px 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            margin-bottom: 10px;
+            min-width: 300px;
+            animation: slideIn 0.3s ease-out;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .toast.success { border-left: 4px solid #10b981; }
+        .toast.error { border-left: 4px solid #ef4444; }
+        .toast.warning { border-left: 4px solid #f59e0b; }
+
+        @keyframes slideIn {
+            from { transform: translateX(400px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        @keyframes slideOut {
+            from { transform: translateX(0); opacity: 1; }
+            to { transform: translateX(400px); opacity: 0; }
+        }
+
+        /* Mobile Responsive */
         @media (max-width: 768px) {
+            body {
+                padding: 20px 10px;
+            }
+
             .header {
                 flex-direction: column;
                 text-align: center;
@@ -402,43 +518,63 @@
                 font-size: 2em;
             }
 
-            .user-info {
-                width: 100%;
+            .card {
+                padding: 25px;
+            }
+
+            .usage-stats {
+                grid-template-columns: 1fr;
             }
 
             .form-row {
                 grid-template-columns: 1fr;
             }
+
+            #toastContainer {
+                left: 10px;
+                right: 10px;
+                top: 10px;
+            }
+
+            .toast {
+                min-width: auto;
+            }
         }
     </style>
 </head>
 <body>
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay">
+        <div class="loading-content">
+            <div class="spinner"></div>
+            <h2 style="margin: 0 0 10px 0;">🦅 Running Test...</h2>
+            <p id="loadingStatus" style="margin: 0; opacity: 0.8;">Analyzing your website</p>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toastContainer"></div>
+
     <div class="container">
         <!-- Header -->
         <div class="header">
             <div class="header-left">
                 <h1>🦅 EagleEye Dashboard</h1>
-                <p>AI-Powered Website QA Testing</p>
+                <p>Professional Website QA Testing</p>
             </div>
             <div class="user-info">
                 <strong id="userEmail">Loading...</strong>
-                <button class="logout-btn" onclick="logout()">Logout</button>
+                <button onclick="logout()" class="logout-btn">Logout</button>
             </div>
         </div>
 
-        <!-- Main Dashboard -->
+        <!-- Plan & Usage Card -->
         <div class="card">
-            <!-- Plan Info -->
             <div class="plan-info">
-                <h2 id="planName">Free Trial</h2>
-                <p id="planDetails">Test your website with 3 free tests</p>
-                <div class="plan-badge" id="planBadge">🎉 Trial Account</div>
+                <h2>Your Plan</h2>
+                <span class="plan-badge" id="planName">Free Trial</span>
             </div>
 
-            <!-- Alert Messages -->
-            <div id="dashboardAlert" class="alert hidden"></div>
-
-            <!-- Usage Stats -->
             <div class="usage-stats">
                 <div class="stat-card">
                     <h3 id="testsUsed">0</h3>
@@ -446,128 +582,143 @@
                 </div>
                 <div class="stat-card">
                     <h3 id="testsRemaining">3</h3>
-                    <p>Tests Remaining</p>
+                    <p>Remaining</p>
                 </div>
                 <div class="stat-card">
                     <h3 id="testsLimit">3</h3>
-                    <p>Total Tests</p>
+                    <p>Total Limit</p>
                 </div>
             </div>
 
-            <!-- Progress Bar -->
             <div class="progress-bar">
-                <div class="progress-fill" id="progressBar" style="width: 0%">0%</div>
+                <div class="progress-fill" id="progressBar" style="width: 0%;">0%</div>
             </div>
 
-            <!-- Upgrade CTA -->
+            <div id="dashboardAlert" class="alert alert-info hidden"></div>
+
             <div id="upgradeCTA" class="upgrade-cta hidden">
-                <h3>🚀 Upgrade Your Plan</h3>
-                <p>You've used all your free tests! Upgrade now to continue testing your website.</p>
-                <button class="btn" onclick="window.location.href='index.html'">
-                    View Plans & Pricing
-                </button>
-            </div>
-
-            <!-- Test Form -->
-            <div class="test-form" id="testFormSection">
-                <h3>Start New Test</h3>
-                
-                <form id="testForm">
-                    <div class="form-group">
-                        <label for="websiteUrl">🌐 Website URL *</label>
-                        <input 
-                            type="url" 
-                            id="websiteUrl" 
-                            placeholder="https://example.com" 
-                            required
-                        >
-                    </div>
-
-                    <!-- Advanced Options Toggle -->
-                    <div class="advanced-toggle" onclick="toggleAdvanced()">
-                        <span>⚙️ Advanced Options (Custom Test Scenarios)</span>
-                        <span class="arrow">▼</span>
-                    </div>
-
-                    <!-- Advanced Content -->
-                    <div class="advanced-content" id="advancedContent">
-                        <div class="form-group">
-                            <label>📝 Test Notes (Optional)</label>
-                            <textarea 
-                                id="testNotes" 
-                                placeholder="Add any specific notes about this test..."
-                            ></textarea>
-                        </div>
-
-                        <h4 style="margin: 20px 0 15px 0; color: #667eea; font-size: 1.1em;">
-                            🎯 Custom Test Scenarios
-                        </h4>
-                        <p style="color: #666; margin-bottom: 20px; font-size: 0.95em;">
-                            Add specific scenarios you want to test on your website. Our AI will focus on these areas.
-                        </p>
-
-                        <div id="scenariosContainer">
-                            <!-- Scenarios will be added here dynamically -->
-                        </div>
-
-                        <button type="button" class="add-scenario-btn" onclick="addScenario()">
-                            ➕ Add Test Scenario
-                        </button>
-                    </div>
-
-                    <button type="submit" class="btn" id="testBtn">
-                        🚀 Start Test
-                    </button>
-                </form>
-
-                <p style="text-align: center; margin-top: 20px; color: #666; font-size: 0.95em;">
-                    📧 Test results will be sent to your email within 24 hours
-                </p>
+                <h3>🚀 Upgrade to Continue Testing</h3>
+                <p>Get more tests and unlock premium features!</p>
+                <a href="pricing.html">View Plans</a>
             </div>
         </div>
-    </div>
-    
-    <div style="text-align: center; color: white; margin-top: 30px; font-size: 0.9em; opacity: 0.8;">
-        <p>© 2026 EagleEye. Created by Mohammad Omar. All rights reserved.</p>
+
+        <!-- Test Form Card -->
+        <div class="card">
+            <form id="testForm" class="test-form">
+                <h3>🧪 Run New Test</h3>
+
+                <div class="form-group">
+                    <label for="websiteUrl">Website URL *</label>
+                    <input 
+                        type="url" 
+                        id="websiteUrl" 
+                        placeholder="https://example.com"
+                        required
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="testNotes">Test Notes (Optional)</label>
+                    <textarea 
+                        id="testNotes" 
+                        placeholder="Add any specific notes about this test..."
+                    ></textarea>
+                </div>
+
+                <!-- Advanced Options -->
+                <div class="advanced-toggle" onclick="toggleAdvanced()">
+                    <span><strong>⚙️ Advanced Options</strong> - Custom Test Scenarios</span>
+                </div>
+
+                <div class="advanced-content" id="advancedContent">
+                    <div style="background: white; padding: 25px; border-radius: 12px; margin-top: 20px;">
+                        <div class="scenario-controls">
+                            <h4 style="margin: 0;">Custom Scenarios</h4>
+                            <button type="button" class="add-scenario-btn" onclick="addScenario()">
+                                ➕ Add Scenario
+                            </button>
+                        </div>
+                        <p style="color: #666; margin-bottom: 20px;">
+                            Add custom test scenarios to focus on specific functionality
+                        </p>
+                        <div id="scenariosContainer"></div>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn" id="testBtn">
+                    🚀 Start Test
+                </button>
+            </form>
+        </div>
     </div>
 
     <script>
-        // Netlify Function URLs
-        const TESTING_WEBHOOK_URL = '/.netlify/functions/test-proxy';
+        // Configuration
         const AUTH_WEBHOOK_URL = '/.netlify/functions/auth-proxy';
-
+        const TESTING_WEBHOOK_URL = '/.netlify/functions/test-proxy';
+        
         let currentUser = null;
         let scenarioCount = 0;
 
-        // Check Auth
-        function checkAuth() {
-            const userData = localStorage.getItem('eagleeye_user');
+        // Toast Notification Function
+        function showToast(message, type = 'success', duration = 5000) {
+            const container = document.getElementById('toastContainer');
             
-            if (!userData) {
-                window.location.href = 'login.html';
-                return false;
-            }
-
-            currentUser = JSON.parse(userData);
+            const icons = {
+                success: '✅',
+                error: '❌',
+                warning: '⚠️'
+            };
             
-            if (!currentUser.logged_in) {
-                window.location.href = 'login.html';
-                return false;
-            }
-
-            return true;
+            const titles = {
+                success: 'Success!',
+                error: 'Error',
+                warning: 'Warning'
+            };
+            
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.innerHTML = `
+                <div style="font-size: 24px;">${icons[type]}</div>
+                <div>
+                    <div style="font-weight: 600; margin-bottom: 5px;">${titles[type]}</div>
+                    <div style="color: #666; font-size: 14px;">${message}</div>
+                </div>
+            `;
+            
+            container.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.style.animation = 'slideOut 0.3s ease-out';
+                setTimeout(() => toast.remove(), 300);
+            }, duration);
         }
 
-        // Initialize
+        // Initialize Dashboard
         function initDashboard() {
-            if (!checkAuth()) return;
-
-            document.getElementById('userEmail').textContent = currentUser.email;
-            updateStats();
+            const userDataStr = localStorage.getItem('eagleeye_user');
+            
+            if (!userDataStr) {
+                window.location.href = 'login.html';
+                return;
+            }
+            
+            try {
+                currentUser = JSON.parse(userDataStr);
+                document.getElementById('userEmail').textContent = currentUser.email;
+                document.getElementById('planName').textContent = (currentUser.plan_type || 'Free Trial').toUpperCase();
+                updateStats();
+            } catch (error) {
+                console.error('Error parsing user data:', error);
+                window.location.href = 'login.html';
+            }
         }
 
-        // Update Stats
+        // Update Statistics
         function updateStats() {
+            if (!currentUser) return;
+            
             const used = parseInt(currentUser.tests_used) || 0;
             const limit = parseInt(currentUser.free_tests) || 3;
             const remaining = Math.max(limit - used, 0);
@@ -642,6 +793,7 @@
                             type="text" 
                             class="scenario-description"
                             placeholder="E.g., Login functionality should work"
+                            required
                         >
                     </div>
                     <div class="form-row">
@@ -651,6 +803,7 @@
                                 type="text" 
                                 class="scenario-expected"
                                 placeholder="E.g., User can login successfully"
+                                required
                             >
                         </div>
                         <div class="form-group">
@@ -666,6 +819,7 @@
             `;
             
             container.insertAdjacentHTML('beforeend', scenarioHTML);
+            showToast('Scenario added successfully!', 'success', 2000);
         }
 
         // Remove Scenario
@@ -673,6 +827,7 @@
             const scenario = document.getElementById(`scenario-${id}`);
             if (scenario) {
                 scenario.remove();
+                showToast('Scenario removed', 'success', 2000);
             }
         }
 
@@ -682,11 +837,11 @@
             const scenarioItems = document.querySelectorAll('.scenario-item');
             
             scenarioItems.forEach((item, index) => {
-                const description = item.querySelector('.scenario-description').value;
-                const expected = item.querySelector('.scenario-expected').value;
+                const description = item.querySelector('.scenario-description').value.trim();
+                const expected = item.querySelector('.scenario-expected').value.trim();
                 const priority = item.querySelector('.scenario-priority').value;
                 
-                if (description || expected) {
+                if (description && expected) {
                     scenarios.push({
                         id: index + 1,
                         description: description,
@@ -699,24 +854,76 @@
             return scenarios;
         }
 
+        // URL Validation (real-time)
+        document.addEventListener('DOMContentLoaded', function() {
+            const urlInput = document.getElementById('websiteUrl');
+            
+            if (urlInput) {
+                urlInput.addEventListener('input', function(e) {
+                    const url = e.target.value;
+                    const urlPattern = /^https?:\/\/.+\..+/;
+                    
+                    e.target.classList.remove('valid', 'invalid');
+                    
+                    if (url && !urlPattern.test(url)) {
+                        e.target.classList.add('invalid');
+                    } else if (url) {
+                        e.target.classList.add('valid');
+                    }
+                });
+            }
+        });
+
         // Test Form Submission
         document.getElementById('testForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             
-            const websiteUrl = document.getElementById('websiteUrl').value;
-            const testNotes = document.getElementById('testNotes').value;
+            const websiteUrl = document.getElementById('websiteUrl').value.trim();
+            const testNotes = document.getElementById('testNotes').value.trim();
             const scenarios = collectScenarios();
             const testBtn = document.getElementById('testBtn');
-            const alertBox = document.getElementById('dashboardAlert');
+            const loadingOverlay = document.getElementById('loadingOverlay');
+            const loadingStatus = document.getElementById('loadingStatus');
             
-            const remaining = (currentUser.free_tests || 3) - (currentUser.tests_used || 0);
-            if (remaining <= 0) {
-                alert('❌ You\'ve used all your free tests!');
+            // Validation
+            if (!websiteUrl) {
+                showToast('Please enter a website URL', 'warning');
                 return;
             }
             
+            const urlPattern = /^https?:\/\/.+\..+/;
+            if (!urlPattern.test(websiteUrl)) {
+                showToast('Please enter a valid URL (e.g., https://example.com)', 'error');
+                return;
+            }
+            
+            const remaining = (currentUser.free_tests || 3) - (currentUser.tests_used || 0);
+            if (remaining <= 0) {
+                showToast('You\'ve used all your free tests! Please upgrade to continue.', 'warning', 7000);
+                return;
+            }
+            
+            // Show loading
             testBtn.disabled = true;
-            testBtn.textContent = '⏳ Starting test...';
+            loadingOverlay.style.display = 'flex';
+            
+            // Progress messages
+            const messages = [
+                'Connecting to server...',
+                'Analyzing your website...',
+                'Running automated tests...',
+                'Checking custom scenarios...',
+                'Generating comprehensive report...',
+                'Almost done...'
+            ];
+            
+            let msgIndex = 0;
+            const messageInterval = setInterval(() => {
+                if (msgIndex < messages.length) {
+                    loadingStatus.textContent = messages[msgIndex];
+                    msgIndex++;
+                }
+            }, 3000);
             
             try {
                 // Step 1: Update counter
@@ -767,12 +974,17 @@
                     })
                 });
                 
+                // Hide loading
+                clearInterval(messageInterval);
+                loadingOverlay.style.display = 'none';
+                testBtn.disabled = false;
+                
                 // Success
-                alertBox.className = 'alert alert-success';
-                alertBox.textContent = scenarios.length > 0 
-                    ? `✅ Test started with ${scenarios.length} custom scenario(s)! Results via email.`
-                    : '✅ Test started! You\'ll receive results via email.';
-                alertBox.classList.remove('hidden');
+                const message = scenarios.length > 0 
+                    ? `Test completed with ${scenarios.length} custom scenario(s)! Report sent to your email.`
+                    : 'Test completed! Report sent to your email.';
+                
+                showToast(message, 'success', 7000);
                 
                 // Clear form
                 document.getElementById('websiteUrl').value = '';
@@ -780,26 +992,32 @@
                 document.getElementById('scenariosContainer').innerHTML = '';
                 scenarioCount = 0;
                 
-                setTimeout(() => {
-                    if (alertBox.classList.contains('alert-success')) {
-                        alertBox.classList.add('hidden');
-                    }
-                }, 5000);
+                // Hide advanced options
+                const toggle = document.querySelector('.advanced-toggle');
+                const content = document.getElementById('advancedContent');
+                if (toggle.classList.contains('active')) {
+                    toggle.classList.remove('active');
+                    content.classList.remove('active');
+                }
                 
             } catch (error) {
                 console.error('Error:', error);
-                alert('Error starting test. Please try again.');
+                clearInterval(messageInterval);
+                loadingOverlay.style.display = 'none';
+                testBtn.disabled = false;
+                
+                showToast('Connection error. Please check your internet and try again.', 'error');
             }
-            
-            testBtn.disabled = false;
-            testBtn.textContent = '🚀 Start Test';
         });
 
         // Logout
         function logout() {
-            if (confirm('Are you sure?')) {
+            if (confirm('Are you sure you want to logout?')) {
                 localStorage.removeItem('eagleeye_user');
-                window.location.href = 'landing.html';
+                showToast('Logged out successfully', 'success', 2000);
+                setTimeout(() => {
+                    window.location.href = 'index.html';
+                }, 1500);
             }
         }
 
