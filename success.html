@@ -198,7 +198,11 @@
                     </div>
                 </div>
 
-                <a href="dashboard.html" class="btn">Go to Dashboard →</a>
+                <p style="color: #666; margin-bottom: 20px;">
+                    Redirecting to dashboard in <span id="countdown">5</span> seconds...
+                </p>
+
+                <a href="dashboard.html" class="btn">Go to Dashboard Now →</a>
             </div>
 
             <div class="error" id="errorMessage"></div>
@@ -206,33 +210,44 @@
     </div>
 
     <script>
-        // Get session_id from URL
-        const urlParams = new URLSearchParams(window.location.search);
-        const sessionId = urlParams.get('session_id');
-
         // Get user data from localStorage
         const userData = JSON.parse(localStorage.getItem('eagleeye_user') || '{}');
         
         // Get selected plan from sessionStorage
         const selectedPlan = JSON.parse(sessionStorage.getItem('selected_plan') || '{}');
 
+        console.log('User Data:', userData);
+        console.log('Selected Plan:', selectedPlan);
+
         async function processPayment() {
-            if (!sessionId) {
-                showError('No session ID found. Please contact support.');
+            // Check user logged in
+            if (!userData.email) {
+                showError('User not logged in. Please login and try again.');
+                setTimeout(() => {
+                    window.location.href = 'login.html';
+                }, 2000);
                 return;
             }
 
-            if (!userData.email) {
-                showError('User not logged in. Redirecting to dashboard...');
+            // Check plan selected
+            if (!selectedPlan.plan) {
+                showError('No plan selected. Redirecting to pricing...');
                 setTimeout(() => {
-                    window.location.href = 'dashboard.html?session_id=' + sessionId;
+                    window.location.href = 'pricing.html';
                 }, 2000);
                 return;
             }
 
             try {
-                // Determine plan details from sessionStorage or amount
+                // Get plan details
                 const planDetails = getPlanDetails(selectedPlan.plan, selectedPlan.price);
+                
+                console.log('Sending to webhook:', {
+                    action: 'update_subscription',
+                    email: userData.email,
+                    plan_type: planDetails.plan,
+                    tests_limit: planDetails.limit
+                });
 
                 // Send update to webhook
                 const response = await fetch('/.netlify/functions/test-proxy', {
@@ -245,14 +260,15 @@
                         email: userData.email,
                         plan_type: planDetails.plan,
                         tests_limit: planDetails.limit,
-                        tests_used: 0, // Reset on new subscription
+                        tests_used: 0,
                         subscription_status: 'active',
-                        session_id: sessionId,
                         payment_date: new Date().toISOString()
                     })
                 });
 
+                console.log('Response status:', response.status);
                 const data = await response.json();
+                console.log('Response data:', data);
 
                 if (data.success) {
                     // Update localStorage with new plan
@@ -268,25 +284,28 @@
                     // Clear selected plan
                     sessionStorage.removeItem('selected_plan');
                     
-                    // Auto redirect to dashboard after 5 seconds
-                    setTimeout(() => {
-                        window.location.href = 'dashboard.html';
-                    }, 5000);
+                    // Countdown redirect
+                    let seconds = 5;
+                    const countdownEl = document.getElementById('countdown');
+                    const countdownInterval = setInterval(() => {
+                        seconds--;
+                        if (countdownEl) countdownEl.textContent = seconds;
+                        if (seconds <= 0) {
+                            clearInterval(countdownInterval);
+                            window.location.href = 'dashboard.html';
+                        }
+                    }, 1000);
                 } else {
-                    showError('Failed to activate subscription. Please contact support.');
+                    showError('Failed to activate subscription: ' + (data.message || 'Unknown error'));
                 }
 
             } catch (error) {
                 console.error('Error:', error);
-                showError('An error occurred. Redirecting to dashboard...');
-                setTimeout(() => {
-                    window.location.href = 'dashboard.html?session_id=' + sessionId;
-                }, 3000);
+                showError('An error occurred: ' + error.message + '. Please contact support.');
             }
         }
 
         function getPlanDetails(planName, price) {
-            // Map plan name/price to details
             const plans = {
                 'starter': { plan: 'starter', limit: 10, name: 'Starter' },
                 'professional': { plan: 'professional', limit: 25, name: 'Professional' },
@@ -294,18 +313,15 @@
                 'enterprise': { plan: 'enterprise', limit: 999999, name: 'Enterprise' }
             };
 
-            // Try to get from plan name
             if (planName && plans[planName.toLowerCase()]) {
                 return plans[planName.toLowerCase()];
             }
 
-            // Fallback: determine from price
+            // Fallback from price
             if (price === 19) return plans.starter;
             if (price === 49) return plans.professional;
             if (price === 99) return plans.business;
-            if (price === 499) return plans.enterprise;
 
-            // Default to starter
             return plans.starter;
         }
 
@@ -326,7 +342,6 @@
 
         // Run on page load
         window.addEventListener('DOMContentLoaded', () => {
-            // Small delay for better UX
             setTimeout(() => {
                 processPayment();
             }, 1000);
